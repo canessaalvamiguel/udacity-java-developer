@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="#" th:object="${newMessage}" method="POST" th:action="@{'/chat'}">
+    <label for="username">Username:</label>
+    <input id="username" th:field="*{username}" type="text">
+    <label for="messageText">Message Text:</label>
+    <input id="messageText" th:field="*{messageText}" type="text">
+    <label for="messageType">Message Type: </label>
+    <select id="messageType" th:field="*{messageType}">
+        <option selected value="say">Say</option>
+        <option value="shout">Shout</option>
+        <option value="whisper">Whisper</option>
+    </select>
+    <input type="submit">
+</form>
+
+<tr th:if="${chats.empty}">
+    <td colspan="2"> No Chats Available </td>
+</tr>
+
+<tr th:if="${!chats.empty}">
+
+    <table border="1">
+        <thead>
+        <tr>
+            <th> Username</th>
+            <th> Message Text</th>
+        </tr>
+        </thead>
+        <tbody>
+    <!--    <tr th:each="msg : *{chats}">-->
+    <!--        <td><span th:text="*{msg.getUsername()}" /></td>-->
+    <!--        <td><span th:text="*{msg.getMessage()}" /></td>-->
+    <!--    </tr>-->
+    <tr th:each="msg : ${chats}">
+        <td><span th:text="*{msg.getUsername()}"> Username </span></td>
+        <td><span th:text="*{msg.getMessage()}"> Message </span></td>
+    </tr>
+        </tbody>
+    </table>
+</tr>
+
+</body>
+</html>
