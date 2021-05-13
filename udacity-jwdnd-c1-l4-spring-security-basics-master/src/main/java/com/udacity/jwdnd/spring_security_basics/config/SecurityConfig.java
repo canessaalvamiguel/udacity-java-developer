@@ -33,12 +33,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/signup", "/css/**", "/js/**").permitAll()
+                .antMatchers("/signup", "/css/**", "/js/**", "/h2-console/**").permitAll()
                 .anyRequest().authenticated();
 
         http.formLogin()
                 .loginPage("/login")
                 .permitAll();
+
+        /*Only to allow access to h2 console*/
+        http.csrf().disable();
+        http.headers().frameOptions().disable();
+        /*----------------------------------*/
 
         http.formLogin()
                 .defaultSuccessUrl("/home", true);
