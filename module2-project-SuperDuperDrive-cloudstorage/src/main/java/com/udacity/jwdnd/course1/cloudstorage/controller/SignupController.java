@@ -4,11 +4,11 @@ import com.udacity.jwdnd.course1.cloudstorage.helpers.SignupTextHelper;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.SignupService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/signup")
@@ -16,6 +16,8 @@ public class SignupController {
 
     private final SignupService userService;
     private final static String default_view = "signup";
+    private final static String default_view_redirect = "redirect:/signup";
+    private final static String login_view_redirect = "redirect:/login";
 
     public SignupController(SignupService userService) {
         this.userService = userService;
@@ -27,7 +29,7 @@ public class SignupController {
     }
 
     @PostMapping()
-    public String signupUser(@ModelAttribute User user, Model model){
+    public String signupUser(@ModelAttribute User user, RedirectAttributes redirectAttributes){
         String signupError = null;
 
         if(!userService.isUserNameAvailable(user.getUsername())){
@@ -42,11 +44,12 @@ public class SignupController {
         }
 
         if(signupError == null){
-            model.addAttribute(SignupTextHelper.signupModel_success,true);
+            redirectAttributes.addFlashAttribute(SignupTextHelper.signupModel_success,true);
+            return login_view_redirect;
         }else{
-            model.addAttribute(SignupTextHelper.signupModel_error, signupError);
+            redirectAttributes.addFlashAttribute(SignupTextHelper.signupModel_error, signupError);
         }
 
-        return default_view;
+        return default_view_redirect;
     }
 }
