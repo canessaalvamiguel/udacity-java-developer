@@ -10,11 +10,17 @@
     </head>
     <body class="p-3 mb-2 bg-light text-black">
         <div class="container">
-            <div id="logoutDiv">
-                <form action="#" method="POST" th:action="@{/logout}">
-                    <button type="submit" class="btn btn-secondary float-right">Logout</button>
-                </form>
+            <div class="row">
+                <div class="col-10 alert alert-success" role="alert">
+                    <label th:text="'Hello ' + ${username}"></label>
+                </div>
+                <div class="col-2" id="logoutDiv">
+                    <form action="#" method="POST" th:action="@{/logout}">
+                        <button type="submit" class="btn btn-secondary float-right">Logout</button>
+                    </form>
+                </div>
             </div>
+
             <div id="contentDiv" style="clear: right;">
                 <nav style="clear: right;">
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">

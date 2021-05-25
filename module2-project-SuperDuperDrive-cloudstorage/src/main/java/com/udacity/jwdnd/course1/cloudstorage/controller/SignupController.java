@@ -2,7 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.controller;
 
 import com.udacity.jwdnd.course1.cloudstorage.helpers.SignupTextHelper;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
-import com.udacity.jwdnd.course1.cloudstorage.services.SignupService;
+import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,12 +14,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/signup")
 public class SignupController {
 
-    private final SignupService userService;
+    private final UserService userService;
     private final static String default_view = "signup";
     private final static String default_view_redirect = "redirect:/signup";
     private final static String login_view_redirect = "redirect:/login";
 
-    public SignupController(SignupService userService) {
+    public SignupController(UserService userService) {
         this.userService = userService;
     }
 
