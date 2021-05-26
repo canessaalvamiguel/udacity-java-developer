@@ -55,12 +55,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="file : ${user_files}">
+                                    <th scope="row"><span th:text="${file.filename}"> Title </span></th>
                                     <td>
                                         <a target="_blank" class="btn btn-success">View</a>
                                         <a  class="btn btn-danger">Delete</a>
                                     </td>
-                                    <th scope="row">ExampleFile.txt</th>
                                 </tr>
                                 </tbody>
                             </table>
@@ -81,13 +81,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr th:each="note : ${user_notes}">
+                                        <th scope="row"><span th:text="${note.notetitle}"> Title </span></th>
+                                        <td><span th:text="${note.notedescription}"> Description </span></td>
                                         <td>
                                             <button type="button" class="btn btn-success">Edit</button>
                                             <a class="btn btn-danger">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -140,14 +140,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="user_credential : ${user_credentials}">
+                                    <th scope="row"><span th:text="${user_credential.url}"> URL </span></th>
+                                    <td><span th:text="${user_credential.username}"> Username </span></td>
+                                    <td><span th:text="${user_credential.password}"> Password </span></td>
                                     <td>
                                         <button type="button" class="btn btn-success">Edit</button>
                                         <a class="btn btn-danger">Delete</a>
                                     </td>
-                                    <th scope="row">Example Credential URL</th>
-                                    <td>Example Credential Username</td>
-                                    <td>Example Credential Password</td>
                                 </tr>
                                 </tbody>
                             </table>
