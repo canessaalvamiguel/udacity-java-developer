@@ -11,14 +11,21 @@
     <body class="p-3 mb-2 bg-light text-black">
         <div class="container">
             <div class="row">
-                <div class="col-10 alert alert-success" role="alert">
-                    <label th:text="'Hello ' + ${username}"></label>
+                <div class="col-10" role="alert">
+                    <span class="badge badge-primary" th:text="'Hello ' + ${username}"></span>
                 </div>
                 <div class="col-2" id="logoutDiv">
                     <form action="#" method="POST" th:action="@{/logout}">
                         <button type="submit" class="btn btn-secondary float-right">Logout</button>
                     </form>
                 </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+                <span th:text="${successMessage}"></span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <span th:text="${errorMessage}"></span>
             </div>
 
             <div id="contentDiv" style="clear: right;">
@@ -85,8 +92,8 @@
                                         <th scope="row"><span th:text="${note.notetitle}"> Title </span></th>
                                         <td><span th:text="${note.notedescription}"> Description </span></td>
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                            <button type="button" class="btn btn-success" th:onclick="showNoteModal([[${note.noteid}]],[[${note.notetitle}]],[[${note.notedescription}]])">Edit</button>
+                                            <a class="btn btn-danger" th:href="@{'/note/delete/'+${note.noteid}}">Delete</a>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -103,15 +110,15 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
-                                            <input type="hidden" name="noteId" id="note-id">
+                                        <form action="#" th:action="@{/note}" method="POST">
+                                            <input type="hidden" name="noteid" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
-                                                <input type="text" name= "noteTitle" class="form-control" id="note-title" maxlength="20" required>
+                                                <input type="text" name= "notetitle" class="form-control" id="note-title" maxlength="20" required autocomplete="off">
                                             </div>
                                             <div class="form-group">
                                                 <label for="note-description" class="col-form-label">Description</label>
-                                                <textarea class="form-control" name="noteDescription" id="note-description" rows="5" maxlength="1000" required></textarea>
+                                                <textarea class="form-control" name="notedescription" id="note-description" rows="5" maxlength="1000" required autocomplete="off"></textarea>
                                             </div>
                                             <button id="noteSubmit" type="submit" class="d-none"></button>
                                         </form>
@@ -214,6 +221,14 @@
                 $('#credential-password').val(password ? password : '');
                 $('#credentialModal').modal('show');
             }
+
+            $( document ).ready(function() {
+                setTimeout(function(){
+                    $('.alert.alert-success').remove();
+                    $('.alert.alert-danger').remove();
+                }, 3000);
+            });
+
         </script>
     </body>
 </html>

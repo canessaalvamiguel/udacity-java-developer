@@ -22,4 +22,12 @@ public class NoteService {
     public List<Note> getNotes(Integer userId){
         return noteMapper.getNotes(userId);
     }
+
+    public int deleteNote(int noteid){
+        return noteMapper.deleteNote(noteid);
+    }
+
+    public int updateNote(Note note){
+        return noteMapper.updateNote(note);
+    }
 }
