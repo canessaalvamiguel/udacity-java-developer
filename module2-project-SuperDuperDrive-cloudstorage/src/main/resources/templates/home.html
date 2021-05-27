@@ -82,9 +82,9 @@
                             <table class="table table-striped" id="userTable">
                                 <thead>
                                     <tr>
-                                        <th style="width: 20%" scope="col"></th>
                                         <th style="width: 20%" scope="col">Title</th>
-                                        <th style="width: 60%" scope="col">Description</th>
+                                        <th style="width: 20%" scope="col">Description</th>
+                                        <th style="width: 60%" scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -140,10 +140,10 @@
                             <table class="table table-striped" th:object="${credentials}" id="credentialTable">
                                 <thead>
                                     <tr>
-                                        <th style="width: 20%" scope="col"></th>
-                                        <th style="width: 35%" scope="col">URL</th>
-                                        <th style="width: 20%" scope="col">Username</th>
-                                        <th style="width: 25%" scope="col">Password</th>
+                                        <th style="width: 20%" scope="col">URL</th>
+                                        <th style="width: 35%" scope="col">Username</th>
+                                        <th style="width: 20%" scope="col">Password</th>
+                                        <th style="width: 25%" scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -152,8 +152,8 @@
                                     <td><span th:text="${user_credential.username}"> Username </span></td>
                                     <td><span th:text="${user_credential.password}"> Password </span></td>
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
-                                        <a class="btn btn-danger">Delete</a>
+                                        <button type="button" th:onclick="showCredentialModal([[${user_credential.credentialid}]],[[${user_credential.url}]],[[${user_credential.username}]],[[${user_credential.password}]])" class="btn btn-success">Edit</button>
+                                        <a th:href="@{'/credential/delete/'+${user_credential.credentialid}}" class="btn btn-danger">Delete</a>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -170,19 +170,19 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST">
-                                            <input type="hidden" name="credentialId" id="credential-id">
+                                        <form action="#" th:action="@{/credential}" method="POST">
+                                            <input type="hidden" name="credentialid" id="credential-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">URL</label>
-                                                <input type="text" name= "url" class="form-control" id="credential-url" maxlength="100" required>
+                                                <input type="text" name= "url" class="form-control" id="credential-url" maxlength="100" required autocomplete="off">
                                             </div>
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Username</label>
-                                                <input type="text" name= "username" class="form-control" id="credential-username" maxlength="30" required>
+                                                <input type="text" name= "username" class="form-control" id="credential-username" maxlength="30" required autocomplete="off">
                                             </div>
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Password</label>
-                                                <input type="text" name= "password" class="form-control" id="credential-password" maxlength="30" required>
+                                                <input type="text" name= "password" class="form-control" id="credential-password" maxlength="30" required autocomplete="off">
                                             </div>
                                             <button id="credentialSubmit" type="submit" class="d-none"></button>
                                         </form>
@@ -214,12 +214,35 @@
             }
 
             // For opening the credentials modal
-            function showCredentialModal(credentialId, url, username, password) {
-                $('#credential-id').val(credentialId ? credentialId : '');
-                $('#credential-url').val(url ? url : '');
-                $('#credential-username').val(username ? username : '');
-                $('#credential-password').val(password ? password : '');
-                $('#credentialModal').modal('show');
+            function showCredentialModal(credentialid, url, username, password) {
+
+                if(credentialid){
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                        if (this.readyState == 4 && this.status == 200) {
+                            try{
+                                var obj = jQuery.parseJSON( this.responseText );
+                                password = obj.response;
+                                $('#credential-id').val(credentialid ? credentialid : '');
+                                $('#credential-url').val(url ? url : '');
+                                $('#credential-username').val(username ? username : '');
+                                $('#credential-password').val(password ? password : '');
+                                $('#credentialModal').modal('show');
+                            }catch (err){
+                                alert("ERROR: Something went wrong while reading the password. Pleas try again later.");
+                                console.log(err.message);
+                            }
+                        }
+                    };
+                    xhttp.open("POST", "/credential/password/"+credentialid, true);
+                    xhttp.send();
+                }else{
+                    $('#credential-id').val('');
+                    $('#credential-url').val('');
+                    $('#credential-username').val('');
+                    $('#credential-password').val('');
+                    $('#credentialModal').modal('show');
+                }
             }
 
             $( document ).ready(function() {
