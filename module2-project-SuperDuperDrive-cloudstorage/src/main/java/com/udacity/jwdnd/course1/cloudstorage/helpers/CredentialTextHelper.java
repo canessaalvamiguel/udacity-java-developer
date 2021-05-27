@@ -12,4 +12,5 @@ public class CredentialTextHelper {
     public static final String errorMessage_delete = "Error! Something went wrong when deleting your credential. Please try again later.";
     public static final String sucessMessage_generic = "Success.";
     public static final String errorMessage_generic = "Error.";
+    public static final String showCredentialsTab = "showCredentialsTab";
 }

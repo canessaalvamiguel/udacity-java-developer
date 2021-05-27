@@ -53,6 +53,7 @@ public class NoteController {
     }
 
     private void handleFlashMessageResult(int result, RedirectAttributes redirectAttributes, int operation) {
+        redirectAttributes.addFlashAttribute(NoteTextHelper.showNotesTab, true);
         if(result > 0){
             switch (operation){
                 case OPERATION_CREATE:

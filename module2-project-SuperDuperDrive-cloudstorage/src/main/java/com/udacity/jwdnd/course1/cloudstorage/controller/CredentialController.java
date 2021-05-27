@@ -69,6 +69,8 @@ public class CredentialController {
     }
 
     private void handleFlashMessageResult(int result, RedirectAttributes redirectAttributes, int operation) {
+
+        redirectAttributes.addFlashAttribute(CredentialTextHelper.showCredentialsTab, true);
         if (result > 0) {
             switch (operation) {
                 case OPERATION_CREATE:
