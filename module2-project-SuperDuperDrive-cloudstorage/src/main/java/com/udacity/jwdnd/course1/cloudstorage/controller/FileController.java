@@ -36,8 +36,14 @@ public class FileController {
             redirectAttributes.addFlashAttribute(FileTextHelper.errorMessage, FileTextHelper.errorMessage_create_maxlimit);
             return home_view_redirect;
         }
+
         String username = authentication.getName();
         User user = userService.getUser(username);
+
+        if (!fileService.isFileNameAvailable(file.getOriginalFilename(), user.getUserId())) {
+            redirectAttributes.addFlashAttribute(FileTextHelper.errorMessage, FileTextHelper.errorMessage_create_filemeIsUsed);
+            return home_view_redirect;
+        }
 
         int result = fileService.uploadFile(file, user.getUserId());
         handleFlashMessageResult(result, redirectAttributes, OPERATION_CREATE);

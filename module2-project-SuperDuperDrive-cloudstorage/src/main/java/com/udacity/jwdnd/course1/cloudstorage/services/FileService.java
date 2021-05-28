@@ -31,6 +31,10 @@ public class FileService {
         return fileMapper.getFiles(userId);
     }
 
+    public boolean isFileNameAvailable(String fileName, Integer userId){
+        return fileMapper.getFileByFileName(fileName, userId) == null;
+    }
+
     public  Resource loadFile(Integer userId, Integer fileid) {
         try {
             File file = fileMapper.getFile(userId, fileid);
