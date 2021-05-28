@@ -26,6 +26,9 @@ public class File {
         this.filedata = filedata;
     }
 
+    public File() {
+    }
+
     public Integer getFileId() {
         return fileId;
     }
