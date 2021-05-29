@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
@@ -77,6 +78,110 @@ class CloudStorageApplicationTests {
 
 	}
 
+	@Test
+	public void testNoteCreation() throws InterruptedException{
+		String noteTitle = "Note title";
+		String noteDescription = "Note description";
+		createNewUserAndGoHome();
+
+		HomePage homePage = new HomePage(driver);
+
+		Thread.sleep(2000);
+		assertEquals("Home", driver.getTitle());
+
+		createNewNote(homePage, noteTitle, noteDescription);
+
+		Thread.sleep(2000);
+
+		Note note = homePage.getFirstNote();
+
+		Assertions.assertEquals(noteTitle, note.getNotetitle());
+		Assertions.assertEquals(noteDescription, note.getNotedescription());
+
+		homePage.performLogout();
+		assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	public void testNoteUpdating() throws InterruptedException{
+		String noteTitle = "Note title";
+		String noteDescription = "Note description";
+		createNewUserAndGoHome();
+
+		HomePage homePage = new HomePage(driver);
+
+		Thread.sleep(2000);
+		assertEquals("Home", driver.getTitle());
+
+		createNewNote(homePage, noteTitle, noteDescription);
+
+		Thread.sleep(2000);
+
+		String noteTitle_modified = "Note title v2";
+		String noteDescription_modified = "Note description v2";
+
+		udpateNote(homePage, noteTitle_modified, noteDescription_modified);
+
+		Thread.sleep(2000);
+
+		Note note = homePage.getFirstNote();
+
+		Assertions.assertEquals(noteTitle_modified, note.getNotetitle());
+		Assertions.assertEquals(noteDescription_modified, note.getNotedescription());
+
+		homePage.performLogout();
+		assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	public void testNoteDeleting() throws InterruptedException{
+		String noteTitle = "Note title";
+		String noteDescription = "Note description";
+		createNewUserAndGoHome();
+
+		HomePage homePage = new HomePage(driver);
+
+		Thread.sleep(2000);
+		assertEquals("Home", driver.getTitle());
+
+		createNewNote(homePage, noteTitle, noteDescription);
+
+		Thread.sleep(2000);
+		deleteNote(homePage);
+
+		Thread.sleep(2000);
+
+		Note note = homePage.getFirstNote();
+
+		Assertions.assertTrue(note == null);
+
+		homePage.performLogout();
+		assertEquals("Login", driver.getTitle());
+	}
+
+	private void deleteNote(HomePage homePage) throws InterruptedException{
+		homePage.openNoteTab();Thread.sleep(2000);
+		homePage.clickDeleteNoteButton();Thread.sleep(2000);
+	}
+
+	private void udpateNote(HomePage homePage, String title, String description) throws InterruptedException{
+		homePage.openNoteTab();Thread.sleep(2000);
+		homePage.clickEditNoteButton();Thread.sleep(2000);
+		homePage.setNoteTitle(title);
+		homePage.setNodeDescription(description);
+		homePage.clickSaveButtonNewNote();
+		homePage.openNoteTab();
+	}
+
+	private void createNewNote(HomePage homePage, String title, String description) throws InterruptedException{
+		homePage.openNoteTab();Thread.sleep(2000);
+		homePage.clickNewNoteButton();Thread.sleep(2000);
+		homePage.setNoteTitle(title);
+		homePage.setNodeDescription(description);
+		homePage.clickSaveButtonNewNote();
+		homePage.openNoteTab();
+	}
+
 	public void performSignup(){
 		driver.get("http://localhost:" + this.port + "/signup");
 		SignupPage signupPage = new SignupPage(driver);
@@ -90,6 +195,13 @@ class CloudStorageApplicationTests {
 
 		LoginPage loginPage = new LoginPage(driver);
 		loginPage.performLogin(USERNAME, PASSWORD);
+	}
+
+	public void  createNewUserAndGoHome() throws InterruptedException{
+		performSignup();
+		Thread.sleep(2000);
+		performLogin(false);
+		Thread.sleep(2000);
 	}
 
 }
