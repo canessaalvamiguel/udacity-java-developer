@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
+import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
@@ -7,7 +8,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -21,7 +21,6 @@ class CloudStorageApplicationTests {
 
 	private static final String FIRST_NAME = "Miguel";
 	private static final String LAST_NAME  = "Canessa";
-	private static final String USERNAME   = "mcanessa";
 	private static final String PASSWORD   = "testPass!";
 
 	@BeforeAll
@@ -55,12 +54,12 @@ class CloudStorageApplicationTests {
 
 	@Test
 	public void testSignupLoginFlow()  throws InterruptedException{
-		performSignup();
+		String username = performSignup();
 		Thread.sleep(2000);
 
 		assertEquals("Login", driver.getTitle());
 
-		performLogin(false);
+		performLogin(username, false);
 		Thread.sleep(2000);
 
 		assertEquals("Home", driver.getTitle());
@@ -159,6 +158,91 @@ class CloudStorageApplicationTests {
 		assertEquals("Login", driver.getTitle());
 	}
 
+	@Test
+	public void testCredentialCreation() throws InterruptedException{
+		String credentialURL = "Credential url";
+		String credentialUsername = "Credential username";
+		String credentialPassword = "Credential password";
+		createNewUserAndGoHome();
+
+		HomePage homePage = new HomePage(driver);
+
+		Thread.sleep(2000);
+		assertEquals("Home", driver.getTitle());
+
+		createNewCredential(homePage, credentialURL, credentialUsername, credentialPassword);
+
+		Thread.sleep(2000);
+
+		Credential credential = homePage.getFirstCredential();
+
+		Assertions.assertEquals(credentialURL, credential.getUrl());
+		Assertions.assertEquals(credentialUsername, credential.getUsername());
+
+		homePage.performLogout();
+		assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	public void testCredentialUpdating() throws InterruptedException{
+		String credentialURL = "Credential url";
+		String credentialUsername = "Credential username";
+		String credentialPassword = "Credential password";
+		createNewUserAndGoHome();
+
+		HomePage homePage = new HomePage(driver);
+
+		Thread.sleep(2000);
+		assertEquals("Home", driver.getTitle());
+
+		createNewCredential(homePage, credentialURL, credentialUsername, credentialPassword);
+
+		Thread.sleep(2000);
+
+		String credentialURL_modified = "Credential url v2";
+		String credentialUsername_modified = "Credential username v2";
+		String credentialPassword_modified = "Credential password v2";
+
+		udpateCredential(homePage, credentialURL_modified, credentialUsername_modified, credentialPassword_modified);
+
+		Thread.sleep(2000);
+
+		Credential credential = homePage.getFirstCredential();
+
+		Assertions.assertEquals(credentialURL_modified, credential.getUrl());
+		Assertions.assertEquals(credentialUsername_modified, credential.getUsername());
+
+		homePage.performLogout();
+		assertEquals("Login", driver.getTitle());
+	}
+
+	@Test
+	public void testCredentialDeleting() throws InterruptedException{
+		String credentialURL = "Credential url";
+		String credentialUsername = "Credential username";
+		String credentialPassword = "Credential password";
+		createNewUserAndGoHome();
+
+		HomePage homePage = new HomePage(driver);
+
+		Thread.sleep(2000);
+		assertEquals("Home", driver.getTitle());
+
+		createNewCredential(homePage, credentialURL, credentialUsername, credentialPassword);
+
+		Thread.sleep(2000);
+		deleteCredential(homePage);
+
+		Thread.sleep(2000);
+
+		Credential credential = homePage.getFirstCredential();
+
+		Assertions.assertTrue(credential == null);
+
+		homePage.performLogout();
+		assertEquals("Login", driver.getTitle());
+	}
+
 	private void deleteNote(HomePage homePage) throws InterruptedException{
 		homePage.openNoteTab();Thread.sleep(2000);
 		homePage.clickDeleteNoteButton();Thread.sleep(2000);
@@ -182,25 +266,53 @@ class CloudStorageApplicationTests {
 		homePage.openNoteTab();
 	}
 
-	public void performSignup(){
-		driver.get("http://localhost:" + this.port + "/signup");
-		SignupPage signupPage = new SignupPage(driver);
-		signupPage.performSignUp(FIRST_NAME, LAST_NAME, USERNAME, PASSWORD);
+	private void deleteCredential(HomePage homePage) throws InterruptedException{
+		homePage.openCredentialTab();Thread.sleep(2000);
+		homePage.clickDeleteCredentialButton();Thread.sleep(2000);
 	}
 
-	public void performLogin(boolean forceUrl){
+	private void udpateCredential(HomePage homePage, String url, String username, String password) throws InterruptedException{
+		homePage.openCredentialTab();Thread.sleep(2000);
+		homePage.clickEditCredentialButton();Thread.sleep(2000);
+		homePage.setCredentialURL(url);
+		homePage.setCredentialUsername(username);
+		homePage.setCredentialPassword(password);
+		homePage.clickSaveButtonNewCredential();
+		homePage.openCredentialTab();
+	}
+
+	private void createNewCredential(HomePage homePage, String url, String username, String password) throws InterruptedException{
+		homePage.openCredentialTab();Thread.sleep(2000);
+		homePage.clickNewCredentialButton();Thread.sleep(2000);
+		homePage.setCredentialURL(url);
+		homePage.setCredentialUsername(username);
+		homePage.setCredentialPassword(password);
+		homePage.clickSaveButtonNewCredential();
+		homePage.openCredentialTab();
+	}
+
+	public String performSignup(){
+		String username = "mcanessa_"+ System.currentTimeMillis();
+		driver.get("http://localhost:" + this.port + "/signup");
+		SignupPage signupPage = new SignupPage(driver);
+		signupPage.performSignUp(FIRST_NAME, LAST_NAME, username, PASSWORD);
+
+		return username;
+	}
+
+	public void performLogin(String username, boolean forceUrl){
 
 		if(forceUrl)
 			driver.get("http://localhost:" + this.port + "/login");
 
 		LoginPage loginPage = new LoginPage(driver);
-		loginPage.performLogin(USERNAME, PASSWORD);
+		loginPage.performLogin(username, PASSWORD);
 	}
 
 	public void  createNewUserAndGoHome() throws InterruptedException{
-		performSignup();
+		String username = performSignup();
 		Thread.sleep(2000);
-		performLogin(false);
+		performLogin(username, false);
 		Thread.sleep(2000);
 	}
 
